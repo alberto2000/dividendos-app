@@ -227,7 +227,33 @@ async function updateDividendosData() {
   }
 }
 
-app.listen(PORT, () => {
-  console.log(`Servidor corriendo en puerto ${PORT}`);
-  console.log(`API disponible en: http://localhost:${PORT}`);
+// Iniciar servidor con manejo de errores
+const server = app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Servidor iniciado correctamente`);
+  console.log(`📡 Puerto: ${PORT}`);
+  console.log(`🌐 API disponible en: http://0.0.0.0:${PORT}`);
+  console.log(`🔍 Healthcheck en: http://0.0.0.0:${PORT}/api/health`);
+});
+
+// Manejar errores del servidor
+server.on('error', (error) => {
+  console.error('❌ Error al iniciar el servidor:', error);
+  process.exit(1);
+});
+
+// Manejar señales de terminación
+process.on('SIGTERM', () => {
+  console.log('🛑 Recibida señal SIGTERM, cerrando servidor...');
+  server.close(() => {
+    console.log('✅ Servidor cerrado correctamente');
+    process.exit(0);
+  });
+});
+
+process.on('SIGINT', () => {
+  console.log('🛑 Recibida señal SIGINT, cerrando servidor...');
+  server.close(() => {
+    console.log('✅ Servidor cerrado correctamente');
+    process.exit(0);
+  });
 });
