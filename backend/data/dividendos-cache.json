@@ -1,0 +1,220 @@
+{
+  "dividendos": {
+    "confirmados": [
+      {
+        "empresa": "LOGISTA",
+        "fecha": "28-Ago",
+        "importe": "0,560€",
+        "rentabilidad": "1,93%",
+        "empresaLink": "https://www.eleconomista.es/empresa/LOGISTA",
+        "recomendacion": "4",
+        "precioObjetivo": "27,77",
+        "precioAnterior": "29,06€",
+        "potencial": "-4.44%"
+      },
+      {
+        "empresa": "SABADELL",
+        "fecha": "29-Ago",
+        "importe": "0,070€",
+        "rentabilidad": "2,06%",
+        "empresaLink": "https://www.eleconomista.es/empresa/SABADELL",
+        "recomendacion": "4",
+        "precioObjetivo": "1,38",
+        "precioAnterior": "3,42€",
+        "potencial": "-59.65%"
+      },
+      {
+        "empresa": "UNICAJA BANCO",
+        "fecha": "25-Sep",
+        "importe": "0,066€",
+        "rentabilidad": "2,71%",
+        "empresaLink": "https://www.eleconomista.es/empresa/UNICAJA-BANCO",
+        "recomendacion": "-",
+        "precioObjetivo": "-",
+        "precioAnterior": "2,43€",
+        "potencial": "-"
+      },
+      {
+        "empresa": "EBRO FOODS",
+        "fecha": "01-Oct",
+        "importe": "0,230€",
+        "rentabilidad": "1,30%",
+        "empresaLink": "https://www.eleconomista.es/empresa/EBRO-FOODS",
+        "recomendacion": "1",
+        "precioObjetivo": "17,48",
+        "precioAnterior": "16,98€",
+        "potencial": "2.94%"
+      },
+      {
+        "empresa": "INDITEX",
+        "fecha": "03-Nov",
+        "importe": "0,290€",
+        "rentabilidad": "0,67%",
+        "empresaLink": "https://www.eleconomista.es/empresa/INDITEX",
+        "recomendacion": "7",
+        "precioObjetivo": "31,37",
+        "precioAnterior": "43,43€",
+        "potencial": "-27.77%"
+      },
+      {
+        "empresa": "PROSEGUR CASH",
+        "fecha": "03-Dic",
+        "importe": "0,042€",
+        "rentabilidad": "5,96%",
+        "empresaLink": "https://www.eleconomista.es/empresa/PROSEGUR-CASH",
+        "recomendacion": "-",
+        "precioObjetivo": "-",
+        "precioAnterior": "0,72€",
+        "potencial": "-"
+      },
+      {
+        "empresa": "FLUIDRA",
+        "fecha": "03-Dic",
+        "importe": "0,300€",
+        "rentabilidad": "1,24%",
+        "empresaLink": "https://www.eleconomista.es/empresa/FLUIDRA",
+        "recomendacion": "5",
+        "precioObjetivo": "19,81",
+        "precioAnterior": "24,10€",
+        "potencial": "-17.80%"
+      },
+      {
+        "empresa": "ARCELORMITTAL",
+        "fecha": "03-Dic",
+        "importe": "0,275€",
+        "rentabilidad": "0,96%",
+        "empresaLink": "",
+        "recomendacion": "-",
+        "precioObjetivo": "-",
+        "precioAnterior": "-",
+        "potencial": "-"
+      },
+      {
+        "empresa": "TELEFONICA",
+        "fecha": "18-Dic",
+        "importe": "0,150€",
+        "rentabilidad": "3,26%",
+        "empresaLink": "https://www.eleconomista.es/empresa/TELEFONICA",
+        "recomendacion": "3",
+        "precioObjetivo": "4,41",
+        "precioAnterior": "4,65€",
+        "potencial": "-5.16%"
+      }
+    ],
+    "previstos": [
+      {
+        "empresa": "ERCROS",
+        "fecha": "26-Ago",
+        "importe": "0,096€",
+        "rentabilidad": "3,47%",
+        "empresaLink": "https://www.eleconomista.es/empresa/ERCROS",
+        "recomendacion": "-",
+        "precioObjetivo": "-",
+        "precioAnterior": "2,75€",
+        "potencial": "-"
+      },
+      {
+        "empresa": "LINEA DIRECTA AS",
+        "fecha": "30-Sep",
+        "importe": "0,014€",
+        "rentabilidad": "1,01%",
+        "empresaLink": "",
+        "recomendacion": "-",
+        "precioObjetivo": "-",
+        "precioAnterior": "-",
+        "potencial": "-"
+      },
+      {
+        "empresa": "GRUPO CATALANA OCC",
+        "fecha": "06-Oct",
+        "importe": "0,223€",
+        "rentabilidad": "0,46%",
+        "empresaLink": "https://www.eleconomista.es/empresa/GRUPO-CATALANA-OCC",
+        "recomendacion": "2",
+        "precioObjetivo": "43,93",
+        "precioAnterior": "48,90€",
+        "potencial": "-10.16%"
+      },
+      {
+        "empresa": "BBVA",
+        "fecha": "09-Oct",
+        "importe": "0,310€",
+        "rentabilidad": "1,91%",
+        "empresaLink": "https://www.eleconomista.es/empresa/BBVA",
+        "recomendacion": "7",
+        "precioObjetivo": "7,62",
+        "precioAnterior": "16,42€",
+        "potencial": "-53.59%"
+      },
+      {
+        "empresa": "MIQUEL Y COSTAS",
+        "fecha": "14-Oct",
+        "importe": "0,113€",
+        "rentabilidad": "0,79%",
+        "empresaLink": "https://www.eleconomista.es/empresa/MIQUEL-Y-COSTAS",
+        "recomendacion": "-",
+        "precioObjetivo": "-",
+        "precioAnterior": "13,90€",
+        "potencial": "-"
+      },
+      {
+        "empresa": "ALBA",
+        "fecha": "24-Oct",
+        "importe": "0,500€",
+        "rentabilidad": "0,00%",
+        "empresaLink": "https://www.eleconomista.es/empresa/ALBA",
+        "recomendacion": "-",
+        "precioObjetivo": "-",
+        "precioAnterior": "83,68€",
+        "potencial": "-"
+      },
+      {
+        "empresa": "SANTANDER",
+        "fecha": "30-Oct",
+        "importe": "0,110€",
+        "rentabilidad": "1,35%",
+        "empresaLink": "https://www.eleconomista.es/empresa/SANTANDER",
+        "recomendacion": "9",
+        "precioObjetivo": "4,50",
+        "precioAnterior": "8,26€",
+        "potencial": "-45.52%"
+      },
+      {
+        "empresa": "RENTA 4 SERVICIOS",
+        "fecha": "03-Nov",
+        "importe": "0,459€",
+        "rentabilidad": "2,27%",
+        "empresaLink": "https://www.eleconomista.es/empresa/RENTA-4-SERVICIOS",
+        "recomendacion": "-",
+        "precioObjetivo": "-",
+        "precioAnterior": "19,80€",
+        "potencial": "-"
+      },
+      {
+        "empresa": "FERROVIAL SA EUR0.2",
+        "fecha": "05-Nov",
+        "importe": "0,467€",
+        "rentabilidad": "1,00%",
+        "empresaLink": "https://www.eleconomista.es/empresa/FERROVIAL-SA-EUR02-25003",
+        "recomendacion": "-",
+        "precioObjetivo": "-",
+        "precioAnterior": "0,00€",
+        "potencial": "-"
+      },
+      {
+        "empresa": "CAIXABANK",
+        "fecha": "06-Nov",
+        "importe": "0,115€",
+        "rentabilidad": "1,31%",
+        "empresaLink": "https://www.eleconomista.es/empresa/CAIXABANK",
+        "recomendacion": "4",
+        "precioObjetivo": "4,57",
+        "precioAnterior": "8,85€",
+        "potencial": "-48.36%"
+      }
+    ]
+  },
+  "lastUpdate": "2025-08-24T18:47:16.254Z",
+  "version": "1.0",
+  "createdAt": "2025-08-24T18:47:16.254Z"
+}
