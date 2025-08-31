@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { scrapeDividendos } = require('./scraper');
+const { scrapeDividendosSimple } = require('./scraper-simple');
 const CacheManager = require('./cacheManager');
 
 const app = express();
@@ -191,7 +192,16 @@ async function updateDividendosData() {
   
   try {
     console.log('🚀 Iniciando actualización de datos...');
-    const result = await scrapeDividendos();
+    
+    // Usar versión simplificada en producción para evitar timeouts
+    let result;
+    if (process.env.NODE_ENV === 'production') {
+      console.log('🏭 Usando scraper simplificado para producción...');
+      result = await scrapeDividendosSimple();
+    } else {
+      console.log('🛠️ Usando scraper completo para desarrollo...');
+      result = await scrapeDividendos();
+    }
     
     // Guardar en caché físico
     const lastUpdate = new Date().toISOString();

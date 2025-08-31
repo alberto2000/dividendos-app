@@ -4,10 +4,26 @@ async function scrapeDividendos() {
   console.log('Iniciando scraping de dividendos...');
   
   try {
-    // Usar Puppeteer para el scraping dinámico
+    // Usar Puppeteer para el scraping dinámico con configuración optimizada para Railway
     const browser = await puppeteer.launch({
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-accelerated-2d-canvas',
+        '--no-first-run',
+        '--no-zygote',
+        '--single-process',
+        '--disable-gpu',
+        '--disable-background-timer-throttling',
+        '--disable-backgrounding-occluded-windows',
+        '--disable-renderer-backgrounding',
+        '--disable-features=TranslateUI',
+        '--disable-ipc-flooding-protection'
+      ],
+      protocolTimeout: 60000, // Aumentar timeout a 60 segundos
+      timeout: 60000
     });
     
     const page = await browser.newPage();
@@ -18,8 +34,8 @@ async function scrapeDividendos() {
     // Navegar a la página de dividendos
     console.log('Navegando a la página de dividendos...');
     await page.goto('https://www.eleconomista.es/mercados-cotizaciones/ecodividendo/calendario.php', {
-      waitUntil: 'networkidle2',
-      timeout: 30000
+      waitUntil: 'domcontentloaded',
+      timeout: 60000
     });
     
     // Esperar a que se cargue la tabla de dividendos
@@ -118,7 +134,7 @@ async function obtenerInfoEmpresas(dividendos, page, tipo) {
         console.log(`  Enlace directo encontrado: ${dividendo.empresaLink}`);
         
         // Navegar directamente a la página de la empresa
-        await page.goto(dividendo.empresaLink, { waitUntil: 'networkidle2', timeout: 15000 });
+        await page.goto(dividendo.empresaLink, { waitUntil: 'domcontentloaded', timeout: 30000 });
         
         // Extraer recomendación, precio objetivo y precio anterior
         const infoEmpresa = await page.evaluate(() => {
