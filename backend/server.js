@@ -1,7 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const { scrapeDividendos } = require('./scraper');
-const { scrapeDividendosSimple } = require('./scraper-simple');
 const { scrapeDividendosAxios } = require('./scraper-axios');
 const CacheManager = require('./cacheManager');
 
@@ -194,15 +192,9 @@ async function updateDividendosData() {
   try {
     console.log('🚀 Iniciando actualización de datos...');
     
-    // Usar versión axios en producción para evitar problemas con Puppeteer
-    let result;
-    if (process.env.NODE_ENV === 'production') {
-      console.log('🏭 Usando scraper axios para producción...');
-      result = await scrapeDividendosAxios();
-    } else {
-      console.log('🛠️ Usando scraper completo para desarrollo...');
-      result = await scrapeDividendos();
-    }
+    // Usar scraper axios (más confiable en servidores)
+    console.log('🏭 Usando scraper axios...');
+    result = await scrapeDividendosAxios();
     
     // Guardar en caché físico
     const lastUpdate = new Date().toISOString();
