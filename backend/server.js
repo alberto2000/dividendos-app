@@ -138,12 +138,9 @@ app.delete('/api/cache/clear', async (req, res) => {
 
 // Ruta de salud
 app.get('/api/health', (req, res) => {
-  res.json({ 
+  res.status(200).json({ 
     status: 'OK', 
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    memory: process.memoryUsage(),
-    env: process.env.NODE_ENV
+    timestamp: new Date().toISOString()
   });
 });
 
