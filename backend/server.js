@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const { scrapeDividendos } = require('./scraper');
 const { scrapeDividendosSimple } = require('./scraper-simple');
+const { scrapeDividendosAxios } = require('./scraper-axios');
 const CacheManager = require('./cacheManager');
 
 const app = express();
@@ -193,11 +194,11 @@ async function updateDividendosData() {
   try {
     console.log('🚀 Iniciando actualización de datos...');
     
-    // Usar versión simplificada en producción para evitar timeouts
+    // Usar versión axios en producción para evitar problemas con Puppeteer
     let result;
     if (process.env.NODE_ENV === 'production') {
-      console.log('🏭 Usando scraper simplificado para producción...');
-      result = await scrapeDividendosSimple();
+      console.log('🏭 Usando scraper axios para producción...');
+      result = await scrapeDividendosAxios();
     } else {
       console.log('🛠️ Usando scraper completo para desarrollo...');
       result = await scrapeDividendos();
