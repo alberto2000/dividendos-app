@@ -194,22 +194,40 @@ async function obtenerInfoEmpresasRegex(dividendos, client, tipo) {
         let precioObjetivo = '-';
         let precioAnterior = '-';
         
-        // Buscar recomendación con regex
+        // Buscar todas las recomendaciones con sus números
+        const recomendaciones = {
+          compra: 0,
+          compraModerada: 0,
+          mantener: 0,
+          ventaModerada: 0,
+          venta: 0
+        };
+        
+        // Patrones para cada tipo de recomendación
         const recomendacionPatterns = [
-          /data-heading="Recomendaciones de compra"[^>]*>[\s\S]*?<td[^>]*>[\s\S]*?<span[^>]*>([^<]+)<\/span>/i,
-          /data-heading="Recomendaciones de compra"[^>]*>[\s\S]*?<td[^>]*>([^<]+)<\/td>/i,
-          /Recomendaciones de compra[\s\S]*?<td[^>]*>[\s\S]*?<span[^>]*>([^<]+)<\/span>/i,
-          /Recomendaciones de compra[\s\S]*?<td[^>]*>([^<]+)<\/td>/i
+          { key: 'compra', pattern: /data-heading="Recomendaciones de compra"[^>]*>[\s\S]*?<td[^>]*>([^<]+)<\/td>/gi },
+          { key: 'compraModerada', pattern: /data-heading="Recomendaciones de compra moderada"[^>]*>[\s\S]*?<td[^>]*>([^<]+)<\/td>/gi },
+          { key: 'mantener', pattern: /data-heading="Recomendaciones de mantener"[^>]*>[\s\S]*?<td[^>]*>([^<]+)<\/td>/gi },
+          { key: 'ventaModerada', pattern: /data-heading="Recomendaciones de venta moderada"[^>]*>[\s\S]*?<td[^>]*>([^<]+)<\/td>/gi },
+          { key: 'venta', pattern: /data-heading="Recomendaciones de venta"[^>]*>[\s\S]*?<td[^>]*>([^<]+)<\/td>/gi }
         ];
         
-        for (const pattern of recomendacionPatterns) {
-          const match = html.match(pattern);
-          if (match && match[1] && match[1].trim()) {
-            recomendacion = match[1].trim();
-            console.log(`  Recomendación encontrada: "${recomendacion}"`);
-            break;
+        // Extraer números para cada tipo de recomendación
+        recomendacionPatterns.forEach(({ key, pattern }) => {
+          let match;
+          while ((match = pattern.exec(html)) !== null) {
+            const numero = parseInt(match[1].trim());
+            if (!isNaN(numero)) {
+              recomendaciones[key] = numero;
+              console.log(`  ${key}: ${numero}`);
+            }
           }
-        }
+        });
+        
+        // Crear string concatenado
+        const recomendacionString = `${recomendaciones.compra}${recomendaciones.compraModerada}${recomendaciones.mantener}${recomendaciones.ventaModerada}${recomendaciones.venta}`;
+        recomendacion = recomendacionString;
+        console.log(`  Recomendación concatenada: "${recomendacion}"`);
         
         // Buscar precio objetivo con regex
         const precioPatterns = [

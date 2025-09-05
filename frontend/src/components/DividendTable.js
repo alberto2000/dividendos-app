@@ -102,11 +102,25 @@ const DividendTable = ({ dividendos, visibleColumns }) => {
   };
 
   const getRecomendacionColor = (recomendacion) => {
+    // Si es un string de números concatenados (ej: "12502")
+    if (/^\d+$/.test(recomendacion)) {
+      return 'text-blue-600 bg-blue-50';
+    }
+    
     const lower = recomendacion.toLowerCase();
     if (lower.includes('compra') || lower.includes('buy')) return 'text-success-600 bg-success-50';
     if (lower.includes('mantener') || lower.includes('hold')) return 'text-warning-600 bg-warning-50';
     if (lower.includes('vender') || lower.includes('sell')) return 'text-danger-600 bg-danger-50';
     return 'text-gray-600 bg-gray-50';
+  };
+
+  const getRecomendacionTooltip = (recomendacion) => {
+    // Si es un string de números concatenados (ej: "12502")
+    if (/^\d+$/.test(recomendacion) && recomendacion.length === 5) {
+      const [compra, compraModerada, mantener, ventaModerada, venta] = recomendacion.split('');
+      return `Compra: ${compra} | Compra Moderada: ${compraModerada} | Mantener: ${mantener} | Venta Moderada: ${ventaModerada} | Venta: ${venta}`;
+    }
+    return recomendacion;
   };
 
   const columnConfig = {
@@ -135,6 +149,16 @@ const DividendTable = ({ dividendos, visibleColumns }) => {
 
   return (
     <div className="table-container">
+      {/* Leyenda de recomendaciones */}
+      <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+        <h4 className="text-sm font-semibold text-blue-800 mb-2">📊 Leyenda de Recomendaciones</h4>
+        <div className="text-xs text-blue-700 space-y-1">
+          <p><strong>Formato:</strong> Compra | Compra Moderada | Mantener | Venta Moderada | Venta</p>
+          <p><strong>Ejemplo:</strong> "12502" = 1 Compra, 2 Compra Moderada, 5 Mantener, 0 Venta Moderada, 2 Venta</p>
+          <p><em>Pasa el cursor sobre los números para ver el desglose completo</em></p>
+        </div>
+      </div>
+      
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
@@ -206,7 +230,10 @@ const DividendTable = ({ dividendos, visibleColumns }) => {
               
               {visibleColumns.recomendacion && (
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getRecomendacionColor(dividendo.recomendacion)}`}>
+                  <span 
+                    className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full cursor-help ${getRecomendacionColor(dividendo.recomendacion)}`}
+                    title={getRecomendacionTooltip(dividendo.recomendacion)}
+                  >
                     {dividendo.recomendacion}
                   </span>
                 </td>
