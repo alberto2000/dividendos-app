@@ -58,6 +58,13 @@ function App() {
         setLastUpdate(result.lastUpdate);
         setFromCache(result.fromCache);
         
+        // Manejar estado de actualización si está presente
+        if (result.updating) {
+          setUpdating(true);
+          setUpdateProgress(result.updateProgress || 0);
+          setCurrentCompany(result.currentCompany || 'Procesando...');
+        }
+        
         console.log('✅ Datos cargados desde archivo');
       } catch (err) {
         setError('Error al cargar los datos. Por favor, inténtalo de nuevo.');

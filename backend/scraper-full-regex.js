@@ -91,9 +91,9 @@ async function scrapeDividendosFullRegex() {
     console.log(`Encontrados ${dividendosConfirmados.length} dividendos confirmados`);
     console.log(`Encontrados ${dividendosPrevistos.length} dividendos previstos`);
     
-    // Obtener información adicional de empresas (limitado a 3 por tipo para evitar timeouts)
-    const dividendosConfirmadosCompletos = await obtenerInfoEmpresasRegex(dividendosConfirmados.slice(0, 3), client, 'confirmados');
-    const dividendosPrevistosCompletos = await obtenerInfoEmpresasRegex(dividendosPrevistos.slice(0, 3), client, 'previstos');
+    // Obtener información adicional de TODAS las empresas
+    const dividendosConfirmadosCompletos = await obtenerInfoEmpresasRegex(dividendosConfirmados, client, 'confirmados');
+    const dividendosPrevistosCompletos = await obtenerInfoEmpresasRegex(dividendosPrevistos, client, 'previstos');
     
     console.log('Scraping completado. Enviando dividendos 📊');
     
@@ -173,7 +173,7 @@ async function scrapeDividendosFullRegex() {
 
 // Función para obtener información adicional de cada empresa usando regex
 async function obtenerInfoEmpresasRegex(dividendos, client, tipo) {
-  console.log(`Obteniendo información adicional de empresas (${tipo})...`);
+  console.log(`Obteniendo información adicional de ${dividendos.length} empresas (${tipo})...`);
   
   const dividendosCompletos = [];
   
