@@ -6,3 +6,5 @@ docker-compose.yml
 railway.toml
 *.md
 !README.md
+node_modules/
+.git/
