@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Usar el proxy configurado en package.json
-const API_BASE_URL = process.env.REACT_APP_API_URL || '';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://tu-app.railway.app';
 
 // Configuración base de axios
 const api = axios.create({
