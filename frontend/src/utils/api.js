@@ -76,11 +76,11 @@ export const fetchDividendos = async () => {
   }
 };
 
-// Función para forzar actualización de dividendos
-export const updateDividendos = async () => {
+// Función para iniciar actualización de dividendos (asíncrona)
+export const startUpdateDividendos = async () => {
   try {
     const url = '/api/dividendos/update';
-    console.log('🔄 Solicitando actualización desde:', url);
+    console.log('🔄 Iniciando actualización desde:', url);
     console.log('🔍 URL completa:', `${API_BASE_URL}${url}`);
 
     const response = await fetch(`${API_BASE_URL}${url}`, {
@@ -95,22 +95,34 @@ export const updateDividendos = async () => {
     }
 
     const data = await response.json();
-    console.log('🔄 Respuesta de actualización:', data);
+    console.log('🔄 Respuesta de inicio de actualización:', data);
     
-    // Siempre devolver la estructura completa
-    if (data && data.dividendos) {
-      if (data.dividendos.confirmados && data.dividendos.previstos) {
-        console.log(`✅ Actualización completada: ${data.dividendos.confirmados.length} confirmados y ${data.dividendos.previstos.length} previstos`);
-      } else if (Array.isArray(data.dividendos)) {
-        console.log(`✅ Actualización completada: ${data.dividendos.length} dividendos en formato array`);
-      }
-      return data; // Devolver la estructura completa
-    } else {
-      console.warn('⚠️ Respuesta de actualización inesperada:', data);
-      return { dividendos: { confirmados: [], previstos: [] }, lastUpdate: null, fromCache: false, updating: false };
-    }
+    return data; // Devolver el estado de la actualización
   } catch (error) {
-    console.error('❌ Error al actualizar dividendos:', error);
+    console.error('❌ Error al iniciar actualización:', error);
+    throw error;
+  }
+};
+
+// Función para consultar el estado de actualización
+export const getUpdateStatus = async () => {
+  try {
+    const url = '/api/dividendos/status';
+    console.log('📊 Consultando estado desde:', url);
+    console.log('🔍 URL completa:', `${API_BASE_URL}${url}`);
+
+    const response = await fetch(`${API_BASE_URL}${url}`);
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log('📊 Estado de actualización:', data);
+    
+    return data;
+  } catch (error) {
+    console.error('❌ Error al consultar estado:', error);
     throw error;
   }
 };

@@ -1,7 +1,7 @@
 import React from 'react';
 import { RefreshCw, TrendingUp } from 'lucide-react';
 
-const Header = ({ onRefresh, loading }) => {
+const Header = ({ onRefresh, loading, updating }) => {
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
       <div className="container mx-auto px-4 py-4">
@@ -25,13 +25,13 @@ const Header = ({ onRefresh, loading }) => {
           <div className="flex items-center space-x-4">
             <button
               onClick={onRefresh}
-              disabled={loading}
+              disabled={loading || updating}
               className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed ${
-                loading ? 'cursor-not-allowed' : ''
+                (loading || updating) ? 'cursor-not-allowed' : ''
               }`}
             >
-              <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-              {loading ? 'Actualizando...' : 'Actualizar'}
+              <RefreshCw className={`w-4 h-4 mr-2 ${(loading || updating) ? 'animate-spin' : ''}`} />
+              {updating ? 'Actualizando...' : loading ? 'Cargando...' : 'Actualizar'}
             </button>
           </div>
         </div>

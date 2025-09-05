@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import DividendTable from './components/DividendTable';
 import ColumnSelector from './components/ColumnSelector';
 import Header from './components/Header';
-import { fetchDividendos, testBasicConnection, updateDividendos } from './utils/api';
+import { fetchDividendos, testBasicConnection, startUpdateDividendos, getUpdateStatus } from './utils/api';
 
 function App() {
   const [dividendosConfirmados, setDividendosConfirmados] = useState([]);
@@ -11,6 +11,9 @@ function App() {
   const [error, setError] = useState(null);
   const [lastUpdate, setLastUpdate] = useState(null);
   const [fromCache, setFromCache] = useState(false);
+  const [updating, setUpdating] = useState(false);
+  const [updateProgress, setUpdateProgress] = useState(0);
+  const [currentCompany, setCurrentCompany] = useState('');
   const [visibleColumns, setVisibleColumns] = useState({
     empresa: true,
     fecha: true,
@@ -68,39 +71,62 @@ function App() {
   }, []);
 
   const handleRefresh = async () => {
-    setLoading(true);
     setError(null);
     
     try {
-      console.log('🔄 Iniciando actualización forzada...');
-      const result = await updateDividendos();
+      console.log('🔄 Iniciando actualización asíncrona...');
       
-      console.log('🔍 Resultado de actualización:', result);
+      // Iniciar la actualización
+      const startResult = await startUpdateDividendos();
+      console.log('🚀 Actualización iniciada:', startResult);
       
-      // Usar la misma lógica de extracción de datos
-      if (result.dividendos && result.dividendos.confirmados && result.dividendos.previstos) {
-        console.log('✅ Datos separados encontrados en result.dividendos');
-        setDividendosConfirmados(result.dividendos.confirmados);
-        setDividendosPrevistos(result.dividendos.previstos);
-      } else if (result.confirmados && result.previstos) {
-        console.log('✅ Datos separados encontrados en result raíz');
-        setDividendosConfirmados(result.confirmados);
-        setDividendosPrevistos(result.previstos);
+      if (startResult.success) {
+        setUpdating(true);
+        setUpdateProgress(0);
+        setCurrentCompany('Iniciando...');
+        
+        // Monitorear el progreso
+        const checkProgress = async () => {
+          try {
+            const status = await getUpdateStatus();
+            console.log('📊 Estado actual:', status);
+            
+            setUpdateProgress(status.progress);
+            setCurrentCompany(status.currentCompany || 'Procesando...');
+            
+            if (status.updating) {
+              // Seguir monitoreando
+              setTimeout(checkProgress, 2000); // Consultar cada 2 segundos
+            } else {
+              // Actualización completada
+              setUpdating(false);
+              setCurrentCompany('');
+              
+              if (status.error) {
+                setError(`Error en la actualización: ${status.error}`);
+              } else {
+                // Recargar los datos
+                console.log('✅ Actualización completada, recargando datos...');
+                await loadDividendos();
+              }
+            }
+          } catch (err) {
+            console.error('Error monitoreando progreso:', err);
+            setUpdating(false);
+            setError('Error monitoreando el progreso de actualización');
+          }
+        };
+        
+        // Iniciar monitoreo
+        setTimeout(checkProgress, 1000); // Empezar a monitorear después de 1 segundo
+        
       } else {
-        console.log('❌ Estructura de datos no reconocida en actualización:', result);
-        setDividendosConfirmados([]);
-        setDividendosPrevistos([]);
+        setError(startResult.message || 'Error al iniciar la actualización');
       }
-      
-      setLastUpdate(result.lastUpdate);
-      setFromCache(result.fromCache);
-      
-      console.log('✅ Actualización completada');
     } catch (err) {
-      setError('Error al actualizar los datos. Por favor, inténtalo de nuevo.');
-      console.error('Error updating dividendos:', err);
-    } finally {
-      setLoading(false);
+      setError('Error al iniciar la actualización. Por favor, inténtalo de nuevo.');
+      console.error('Error starting update:', err);
+      setUpdating(false);
     }
   };
 
@@ -113,7 +139,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header onRefresh={handleRefresh} loading={loading} />
+      <Header onRefresh={handleRefresh} loading={loading} updating={updating} />
       
       <main className="container mx-auto px-4 py-8">
         <div className="mb-6">
@@ -170,6 +196,25 @@ function App() {
               <div className="text-center">
                 <div className="loading-spinner mx-auto mb-4"></div>
                 <p className="text-gray-600">Cargando datos de dividendos...</p>
+              </div>
+            </div>
+          ) : updating ? (
+            <div className="flex justify-center items-center py-12">
+              <div className="text-center max-w-md">
+                <div className="loading-spinner mx-auto mb-4"></div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Actualizando datos...</h3>
+                <div className="w-full bg-gray-200 rounded-full h-2.5 mb-2">
+                  <div 
+                    className="bg-blue-600 h-2.5 rounded-full transition-all duration-300" 
+                    style={{ width: `${updateProgress}%` }}
+                  ></div>
+                </div>
+                <p className="text-sm text-gray-600 mb-1">
+                  Progreso: {updateProgress}%
+                </p>
+                <p className="text-sm text-gray-500">
+                  {currentCompany}
+                </p>
               </div>
             </div>
           ) : (
