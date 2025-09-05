@@ -50,6 +50,15 @@ try {
   process.exit(1);
 }
 
+try {
+  console.log('📦 Probando dataManager...');
+  const { getStoredData, saveData, isDataRecent, setUpdating } = require('./dataManager');
+  console.log('✅ Data manager cargado correctamente');
+} catch (error) {
+  console.error('❌ Error cargando data manager:', error);
+  process.exit(1);
+}
+
 // Si llegamos aquí, todas las dependencias están bien
 console.log('🎉 Todas las dependencias cargadas correctamente');
 
@@ -103,9 +112,23 @@ app.get('/api/dividendos', async (req, res) => {
   console.log('📡 Petición recibida en /api/dividendos');
   
   try {
-    console.log('🔄 Obteniendo datos de dividendos...');
+    const { getStoredData, isDataRecent } = require('./dataManager');
+    
+    // Verificar si hay datos recientes en el archivo
+    if (isDataRecent()) {
+      console.log('📦 Usando datos del archivo (recientes)');
+      const storedData = getStoredData();
+      return res.json(storedData);
+    }
+    
+    console.log('🔄 Datos no recientes o no existen, obteniendo datos frescos...');
     const { scrapeDividendosFullRegex } = require('./scraper-full-regex');
+    const { saveData } = require('./dataManager');
+    
     const result = await scrapeDividendosFullRegex();
+    
+    // Guardar en archivo
+    saveData(result);
     
     res.json({
       dividendos: result,
@@ -115,6 +138,19 @@ app.get('/api/dividendos', async (req, res) => {
     });
   } catch (error) {
     console.error('❌ Error al obtener dividendos:', error);
+    
+    // Intentar devolver datos del archivo como fallback
+    try {
+      const { getStoredData } = require('./dataManager');
+      const storedData = getStoredData();
+      if (storedData.dividendos.confirmados.length > 0 || storedData.dividendos.previstos.length > 0) {
+        console.log('📦 Devolviendo datos del archivo como fallback');
+        return res.json(storedData);
+      }
+    } catch (fallbackError) {
+      console.error('❌ Error accediendo al archivo:', fallbackError.message);
+    }
+    
     res.status(500).json({
       error: 'Error al obtener los datos',
       dividendos: { confirmados: [], previstos: [] },
@@ -127,11 +163,23 @@ app.get('/api/dividendos', async (req, res) => {
 
 // Ruta para forzar actualización de datos
 app.post('/api/dividendos/update', async (req, res) => {
-  console.log('🔄 Petición de actualización recibida');
+  console.log('🔄 Petición de actualización forzada recibida');
   
   try {
     const { scrapeDividendosFullRegex } = require('./scraper-full-regex');
+    const { saveData, setUpdating } = require('./dataManager');
+    
+    // Marcar que se está actualizando
+    setUpdating(true);
+    
+    console.log('🔄 Forzando actualización de datos...');
     const result = await scrapeDividendosFullRegex();
+    
+    // Guardar en archivo
+    saveData(result);
+    
+    // Marcar que ya no se está actualizando
+    setUpdating(false);
     
     res.json({
       dividendos: result,
@@ -141,6 +189,11 @@ app.post('/api/dividendos/update', async (req, res) => {
     });
   } catch (error) {
     console.error('❌ Error en actualización:', error);
+    
+    // Marcar que ya no se está actualizando
+    const { setUpdating } = require('./dataManager');
+    setUpdating(false);
+    
     res.status(500).json({
       error: 'Error al actualizar los datos',
       dividendos: { confirmados: [], previstos: [] },

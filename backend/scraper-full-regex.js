@@ -223,9 +223,15 @@ async function obtenerInfoEmpresasRegex(dividendos, client, tipo) {
         for (const pattern of precioPatterns) {
           const match = html.match(pattern);
           if (match && match[1] && match[1].trim()) {
-            precioObjetivo = match[1].trim();
-            console.log(`  Precio objetivo encontrado: "${precioObjetivo}"`);
-            break;
+            const precioText = match[1].trim();
+            // Verificar que sea un precio válido (contiene € o es un número)
+            if (precioText.includes('€') || /^\d+[,.]?\d*$/.test(precioText.replace(/[€\s]/g, ''))) {
+              precioObjetivo = precioText;
+              console.log(`  Precio objetivo encontrado: "${precioObjetivo}"`);
+              break;
+            } else {
+              console.log(`  Precio objetivo inválido (parece fecha): "${precioText}"`);
+            }
           }
         }
         
