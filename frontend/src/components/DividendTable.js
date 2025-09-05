@@ -102,8 +102,8 @@ const DividendTable = ({ dividendos, visibleColumns }) => {
   };
 
   const getRecomendacionColor = (recomendacion) => {
-    // Si es un string de números concatenados (ej: "12502")
-    if (/^\d+$/.test(recomendacion)) {
+    // Si es un string de números con guiones (ej: "1-2-5-0-2")
+    if (/^\d+-\d+-\d+-\d+-\d+$/.test(recomendacion)) {
       return 'text-blue-600 bg-blue-50';
     }
     
@@ -115,9 +115,9 @@ const DividendTable = ({ dividendos, visibleColumns }) => {
   };
 
   const getRecomendacionTooltip = (recomendacion) => {
-    // Si es un string de números concatenados (ej: "12502")
-    if (/^\d+$/.test(recomendacion) && recomendacion.length === 5) {
-      const [compra, compraModerada, mantener, ventaModerada, venta] = recomendacion.split('');
+    // Si es un string de números con guiones (ej: "1-2-5-0-2")
+    if (/^\d+-\d+-\d+-\d+-\d+$/.test(recomendacion)) {
+      const [compra, compraModerada, mantener, ventaModerada, venta] = recomendacion.split('-');
       return `Compra: ${compra} | Compra Moderada: ${compraModerada} | Mantener: ${mantener} | Venta Moderada: ${ventaModerada} | Venta: ${venta}`;
     }
     return recomendacion;
@@ -154,7 +154,7 @@ const DividendTable = ({ dividendos, visibleColumns }) => {
         <h4 className="text-sm font-semibold text-blue-800 mb-2">📊 Leyenda de Recomendaciones</h4>
         <div className="text-xs text-blue-700 space-y-1">
           <p><strong>Formato:</strong> Compra | Compra Moderada | Mantener | Venta Moderada | Venta</p>
-          <p><strong>Ejemplo:</strong> "12502" = 1 Compra, 2 Compra Moderada, 5 Mantener, 0 Venta Moderada, 2 Venta</p>
+          <p><strong>Ejemplo:</strong> "1-2-5-0-2" = 1 Compra, 2 Compra Moderada, 5 Mantener, 0 Venta Moderada, 2 Venta</p>
           <p><em>Pasa el cursor sobre los números para ver el desglose completo</em></p>
         </div>
       </div>

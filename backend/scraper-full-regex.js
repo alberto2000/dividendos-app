@@ -224,8 +224,8 @@ async function obtenerInfoEmpresasRegex(dividendos, client, tipo) {
           }
         });
         
-        // Crear string concatenado
-        const recomendacionString = `${recomendaciones.compra}${recomendaciones.compraModerada}${recomendaciones.mantener}${recomendaciones.ventaModerada}${recomendaciones.venta}`;
+        // Crear string concatenado con guiones
+        const recomendacionString = `${recomendaciones.compra}-${recomendaciones.compraModerada}-${recomendaciones.mantener}-${recomendaciones.ventaModerada}-${recomendaciones.venta}`;
         recomendacion = recomendacionString;
         console.log(`  Recomendación concatenada: "${recomendacion}"`);
         
