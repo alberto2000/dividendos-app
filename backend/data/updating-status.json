@@ -1,0 +1,10 @@
+{
+  "updating": false,
+  "startedAt": null,
+  "completedAt": null,
+  "totalCompanies": 0,
+  "processedCompanies": 0,
+  "currentCompany": "",
+  "error": null,
+  "progress": 0
+}

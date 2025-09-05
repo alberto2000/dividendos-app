@@ -59,6 +59,24 @@ try {
   process.exit(1);
 }
 
+try {
+  console.log('📦 Probando updateManager...');
+  const { getUpdateStatus, startUpdate, updateProgress, completeUpdate, setError } = require('./updateManager');
+  console.log('✅ Update manager cargado correctamente');
+} catch (error) {
+  console.error('❌ Error cargando update manager:', error);
+  process.exit(1);
+}
+
+try {
+  console.log('📦 Probando scraper-async...');
+  const { scrapeDividendosAsync } = require('./scraper-async');
+  console.log('✅ Scraper asíncrono cargado correctamente');
+} catch (error) {
+  console.error('❌ Error cargando scraper asíncrono:', error);
+  process.exit(1);
+}
+
 // Si llegamos aquí, todas las dependencias están bien
 console.log('🎉 Todas las dependencias cargadas correctamente');
 
@@ -113,11 +131,23 @@ app.get('/api/dividendos', async (req, res) => {
   
   try {
     const { getStoredData, isDataRecent } = require('./dataManager');
+    const { getUpdateStatus } = require('./updateManager');
+    
+    // Obtener estado de actualización
+    const updateStatus = getUpdateStatus();
     
     // Verificar si hay datos recientes en el archivo
     if (isDataRecent()) {
       console.log('📦 Usando datos del archivo (recientes)');
       const storedData = getStoredData();
+      
+      // Agregar información de actualización si está en curso
+      if (updateStatus.updating) {
+        storedData.updating = true;
+        storedData.updateProgress = updateStatus.progress;
+        storedData.currentCompany = updateStatus.currentCompany;
+      }
+      
       return res.json(storedData);
     }
     
@@ -161,45 +191,76 @@ app.get('/api/dividendos', async (req, res) => {
   }
 });
 
-// Ruta para forzar actualización de datos
+// Ruta para forzar actualización de datos (ASÍNCRONA)
 app.post('/api/dividendos/update', async (req, res) => {
   console.log('🔄 Petición de actualización forzada recibida');
   
   try {
-    const { scrapeDividendosFullRegex } = require('./scraper-full-regex');
-    const { saveData, setUpdating } = require('./dataManager');
+    const { getUpdateStatus } = require('./updateManager');
     
-    // Marcar que se está actualizando
-    setUpdating(true);
+    // Verificar si ya hay una actualización en curso
+    const currentStatus = getUpdateStatus();
+    if (currentStatus.updating) {
+      console.log('⚠️ Ya hay una actualización en curso');
+      return res.json({
+        success: false,
+        message: 'Ya hay una actualización en curso',
+        updating: true,
+        progress: currentStatus.progress,
+        currentCompany: currentStatus.currentCompany
+      });
+    }
     
-    console.log('🔄 Forzando actualización de datos...');
-    const result = await scrapeDividendosFullRegex();
+    // Iniciar scraping asíncrono en background
+    console.log('🚀 Iniciando scraping asíncrono en background...');
+    const { scrapeDividendosAsync } = require('./scraper-async');
     
-    // Guardar en archivo
-    saveData(result);
+    // Ejecutar en background (no esperar)
+    scrapeDividendosAsync().catch(error => {
+      console.error('❌ Error en scraping asíncrono:', error);
+    });
     
-    // Marcar que ya no se está actualizando
-    setUpdating(false);
+    // Responder inmediatamente
+    res.json({
+      success: true,
+      message: 'Actualización iniciada en background',
+      updating: true,
+      progress: 0,
+      currentCompany: 'Iniciando...'
+    });
+    
+  } catch (error) {
+    console.error('❌ Error iniciando actualización:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error al iniciar la actualización',
+      error: error.message
+    });
+  }
+});
+
+// Endpoint para consultar el estado de actualización
+app.get('/api/dividendos/status', (req, res) => {
+  console.log('📊 Consulta de estado de actualización');
+  
+  try {
+    const { getUpdateStatus } = require('./updateManager');
+    const status = getUpdateStatus();
     
     res.json({
-      dividendos: result,
-      lastUpdate: new Date().toISOString(),
-      fromCache: false,
-      updating: false
+      updating: status.updating,
+      progress: status.progress,
+      totalCompanies: status.totalCompanies,
+      processedCompanies: status.processedCompanies,
+      currentCompany: status.currentCompany,
+      startedAt: status.startedAt,
+      completedAt: status.completedAt,
+      error: status.error
     });
   } catch (error) {
-    console.error('❌ Error en actualización:', error);
-    
-    // Marcar que ya no se está actualizando
-    const { setUpdating } = require('./dataManager');
-    setUpdating(false);
-    
+    console.error('❌ Error obteniendo estado:', error);
     res.status(500).json({
-      error: 'Error al actualizar los datos',
-      dividendos: { confirmados: [], previstos: [] },
-      lastUpdate: null,
-      fromCache: false,
-      updating: false
+      error: 'Error al obtener el estado de actualización'
     });
   }
 });
