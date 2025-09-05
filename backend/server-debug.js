@@ -1,4 +1,7 @@
 console.log('🚀 Iniciando servidor con debugging...');
+console.log(`📅 Fecha: ${new Date().toISOString()}`);
+console.log(`🌍 Entorno: ${process.env.NODE_ENV || 'development'}`);
+console.log(`📡 Puerto: ${process.env.PORT || 3001}`);
 
 // Probar cada dependencia individualmente
 try {
@@ -97,10 +100,18 @@ app.get('/health', (req, res) => {
 console.log('✅ Rutas configuradas');
 
 // Iniciar servidor
-app.listen(PORT, '0.0.0.0', () => {
+console.log('🚀 Iniciando servidor...');
+const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`✅ Servidor iniciado en puerto ${PORT}`);
   console.log(`🌐 Disponible en: http://0.0.0.0:${PORT}`);
   console.log(`🔍 Healthcheck: http://0.0.0.0:${PORT}/api/health`);
+  console.log('🎉 Servidor funcionando correctamente');
+});
+
+// Manejar errores del servidor
+server.on('error', (error) => {
+  console.error('❌ Error del servidor:', error);
+  process.exit(1);
 });
 
 // Manejar errores
@@ -111,3 +122,22 @@ process.on('uncaughtException', (error) => {
 process.on('unhandledRejection', (reason, promise) => {
   console.error('❌ Promesa rechazada no manejada:', reason);
 });
+
+// Mantener el proceso vivo
+process.on('SIGTERM', () => {
+  console.log('🛑 Recibida señal SIGTERM, cerrando servidor...');
+  server.close(() => {
+    console.log('✅ Servidor cerrado correctamente');
+    process.exit(0);
+  });
+});
+
+process.on('SIGINT', () => {
+  console.log('🛑 Recibida señal SIGINT, cerrando servidor...');
+  server.close(() => {
+    console.log('✅ Servidor cerrado correctamente');
+    process.exit(0);
+  });
+});
+
+console.log('🔄 Servidor configurado, esperando conexiones...');
