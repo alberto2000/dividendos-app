@@ -105,7 +105,7 @@ async function scrapeDividendosAsync() {
       dividendosConfirmados, 
       client, 
       'confirmados',
-      dividendosConfirmados.length
+      0
     );
     
     // Procesar todas las empresas previstas
@@ -113,7 +113,7 @@ async function scrapeDividendosAsync() {
       dividendosPrevistos, 
       client, 
       'previstos',
-      dividendosConfirmados.length + dividendosPrevistos.length
+      dividendosConfirmados.length
     );
     
     // Guardar datos finales

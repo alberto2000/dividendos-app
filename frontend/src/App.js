@@ -120,6 +120,48 @@ function App() {
         // Iniciar monitoreo
         setTimeout(checkProgress, 1000); // Empezar a monitorear después de 1 segundo
         
+      } else if (startResult.updating) {
+        // Ya hay una actualización en curso, monitorear esa
+        console.log('⚠️ Ya hay una actualización en curso, monitoreando...');
+        setUpdating(true);
+        setUpdateProgress(startResult.progress || 0);
+        setCurrentCompany(startResult.currentCompany || 'Procesando...');
+        
+        // Monitorear el progreso existente
+        const checkProgress = async () => {
+          try {
+            const status = await getUpdateStatus();
+            console.log('📊 Estado actual:', status);
+            
+            setUpdateProgress(status.progress);
+            setCurrentCompany(status.currentCompany || 'Procesando...');
+            
+            if (status.updating) {
+              // Seguir monitoreando
+              setTimeout(checkProgress, 2000); // Consultar cada 2 segundos
+            } else {
+              // Actualización completada
+              setUpdating(false);
+              setCurrentCompany('');
+              
+              if (status.error) {
+                setError(`Error en la actualización: ${status.error}`);
+              } else {
+                // Recargar los datos
+                console.log('✅ Actualización completada, recargando datos...');
+                await loadDividendos();
+              }
+            }
+          } catch (err) {
+            console.error('Error monitoreando progreso:', err);
+            setUpdating(false);
+            setError('Error monitoreando el progreso de actualización');
+          }
+        };
+        
+        // Iniciar monitoreo
+        setTimeout(checkProgress, 1000); // Empezar a monitorear después de 1 segundo
+        
       } else {
         setError(startResult.message || 'Error al iniciar la actualización');
       }

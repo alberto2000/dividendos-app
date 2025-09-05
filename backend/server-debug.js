@@ -265,6 +265,39 @@ app.get('/api/dividendos/status', (req, res) => {
   }
 });
 
+// Endpoint de debug para ver archivos de datos (TEMPORAL)
+app.get('/api/debug/files', (req, res) => {
+  console.log('🔍 Consulta de archivos de debug');
+  
+  try {
+    const { getStoredData } = require('./dataManager');
+    const { getUpdateStatus } = require('./updateManager');
+    
+    const dividendosData = getStoredData();
+    const updateStatus = getUpdateStatus();
+    
+    res.json({
+      dividendosData: {
+        lastUpdate: dividendosData.lastUpdate,
+        confirmadosCount: dividendosData.dividendos?.confirmados?.length || 0,
+        previstosCount: dividendosData.dividendos?.previstos?.length || 0,
+        sampleConfirmados: dividendosData.dividendos?.confirmados?.slice(0, 2) || [],
+        samplePrevistos: dividendosData.dividendos?.previstos?.slice(0, 2) || []
+      },
+      updateStatus: updateStatus,
+      files: {
+        dividendosDataExists: true,
+        updateStatusExists: true
+      }
+    });
+  } catch (error) {
+    console.error('❌ Error obteniendo archivos de debug:', error);
+    res.status(500).json({
+      error: 'Error al obtener archivos de debug'
+    });
+  }
+});
+
 console.log('✅ Rutas configuradas');
 
 // Iniciar servidor

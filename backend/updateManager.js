@@ -64,7 +64,7 @@ function startUpdate(totalCompanies) {
 // Función para actualizar progreso
 function updateProgress(processedCompanies, currentCompany) {
   const status = getUpdateStatus();
-  const progress = status.totalCompanies > 0 ? Math.round((processedCompanies / status.totalCompanies) * 100) : 0;
+  const progress = status.totalCompanies > 0 ? Math.min(Math.round((processedCompanies / status.totalCompanies) * 100), 100) : 0;
   
   return updateStatus({
     processedCompanies: processedCompanies,
