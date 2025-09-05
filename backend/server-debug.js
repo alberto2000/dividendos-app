@@ -42,8 +42,8 @@ try {
 // }
 
 try {
-  console.log('📦 Probando scraper-complete...');
-  const { scrapeDividendosComplete } = require('./scraper-complete');
+  console.log('📦 Probando scraper-full...');
+  const { scrapeDividendosFull } = require('./scraper-full');
   console.log('✅ Scraper completo cargado correctamente');
 } catch (error) {
   console.error('❌ Error cargando scraper completo:', error);
@@ -104,8 +104,8 @@ app.get('/api/dividendos', async (req, res) => {
   
   try {
     console.log('🔄 Obteniendo datos de dividendos...');
-    const { scrapeDividendosComplete } = require('./scraper-complete');
-    const result = await scrapeDividendosComplete();
+    const { scrapeDividendosFull } = require('./scraper-full');
+    const result = await scrapeDividendosFull();
     
     res.json({
       dividendos: result,
@@ -130,8 +130,8 @@ app.post('/api/dividendos/update', async (req, res) => {
   console.log('🔄 Petición de actualización recibida');
   
   try {
-    const { scrapeDividendosComplete } = require('./scraper-complete');
-    const result = await scrapeDividendosComplete();
+    const { scrapeDividendosFull } = require('./scraper-full');
+    const result = await scrapeDividendosFull();
     
     res.json({
       dividendos: result,
