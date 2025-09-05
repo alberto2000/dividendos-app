@@ -24,56 +24,56 @@ function App() {
     potencial: true
   });
 
-  useEffect(() => {
-    const loadDividendos = async () => {
-      setLoading(true);
-      setError(null);
+  const loadDividendos = async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      // Solo cargar datos del archivo, NO hacer actualización automática
+      console.log('📂 Cargando datos desde archivo...');
+      const result = await fetchDividendos();
       
-      try {
-        // Solo cargar datos del archivo, NO hacer actualización automática
-        console.log('📂 Cargando datos desde archivo...');
-        const result = await fetchDividendos();
-        
-        console.log('🔍 Estructura de datos recibida:', result);
-        
-        // Separar dividendos confirmados y previstos
-        if (result.dividendos && result.dividendos.confirmados && result.dividendos.previstos) {
-          console.log('✅ Datos separados encontrados en result.dividendos');
-          setDividendosConfirmados(result.dividendos.confirmados);
-          setDividendosPrevistos(result.dividendos.previstos);
-        } else if (result.confirmados && result.previstos) {
-          console.log('✅ Datos separados encontrados en result raíz');
-          setDividendosConfirmados(result.confirmados);
-          setDividendosPrevistos(result.previstos);
-        } else if (Array.isArray(result)) {
-          console.log('⚠️ Datos en formato array (versión anterior)');
-          setDividendosConfirmados(result);
-          setDividendosPrevistos([]);
-        } else {
-          console.log('❌ Estructura de datos no reconocida:', result);
-          setDividendosConfirmados([]);
-          setDividendosPrevistos([]);
-        }
-        
-        setLastUpdate(result.lastUpdate);
-        setFromCache(result.fromCache);
-        
-        // Manejar estado de actualización si está presente
-        if (result.updating) {
-          setUpdating(true);
-          setUpdateProgress(result.updateProgress || 0);
-          setCurrentCompany(result.currentCompany || 'Procesando...');
-        }
-        
-        console.log('✅ Datos cargados desde archivo');
-      } catch (err) {
-        setError('Error al cargar los datos. Por favor, inténtalo de nuevo.');
-        console.error('Error loading dividendos:', err);
-      } finally {
-        setLoading(false);
+      console.log('🔍 Estructura de datos recibida:', result);
+      
+      // Separar dividendos confirmados y previstos
+      if (result.dividendos && result.dividendos.confirmados && result.dividendos.previstos) {
+        console.log('✅ Datos separados encontrados en result.dividendos');
+        setDividendosConfirmados(result.dividendos.confirmados);
+        setDividendosPrevistos(result.dividendos.previstos);
+      } else if (result.confirmados && result.previstos) {
+        console.log('✅ Datos separados encontrados en result raíz');
+        setDividendosConfirmados(result.confirmados);
+        setDividendosPrevistos(result.previstos);
+      } else if (Array.isArray(result)) {
+        console.log('⚠️ Datos en formato array (versión anterior)');
+        setDividendosConfirmados(result);
+        setDividendosPrevistos([]);
+      } else {
+        console.log('❌ Estructura de datos no reconocida:', result);
+        setDividendosConfirmados([]);
+        setDividendosPrevistos([]);
       }
-    };
+      
+      setLastUpdate(result.lastUpdate);
+      setFromCache(result.fromCache);
+      
+      // Manejar estado de actualización si está presente
+      if (result.updating) {
+        setUpdating(true);
+        setUpdateProgress(result.updateProgress || 0);
+        setCurrentCompany(result.currentCompany || 'Procesando...');
+      }
+      
+      console.log('✅ Datos cargados desde archivo');
+    } catch (err) {
+      setError('Error al cargar los datos. Por favor, inténtalo de nuevo.');
+      console.error('Error loading dividendos:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     loadDividendos();
   }, []);
 
