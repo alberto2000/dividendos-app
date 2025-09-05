@@ -42,11 +42,11 @@ try {
 // }
 
 try {
-  console.log('📦 Probando scraper-simple-axios...');
-  const { scrapeDividendosSimpleAxios } = require('./scraper-simple-axios');
-  console.log('✅ Scraper simple cargado correctamente');
+  console.log('📦 Probando scraper-complete...');
+  const { scrapeDividendosComplete } = require('./scraper-complete');
+  console.log('✅ Scraper completo cargado correctamente');
 } catch (error) {
-  console.error('❌ Error cargando scraper simple:', error);
+  console.error('❌ Error cargando scraper completo:', error);
   process.exit(1);
 }
 
@@ -104,8 +104,8 @@ app.get('/api/dividendos', async (req, res) => {
   
   try {
     console.log('🔄 Obteniendo datos de dividendos...');
-    const { scrapeDividendosSimpleAxios } = require('./scraper-simple-axios');
-    const result = await scrapeDividendosSimpleAxios();
+    const { scrapeDividendosComplete } = require('./scraper-complete');
+    const result = await scrapeDividendosComplete();
     
     res.json({
       dividendos: result,
@@ -130,8 +130,8 @@ app.post('/api/dividendos/update', async (req, res) => {
   console.log('🔄 Petición de actualización recibida');
   
   try {
-    const { scrapeDividendosSimpleAxios } = require('./scraper-simple-axios');
-    const result = await scrapeDividendosSimpleAxios();
+    const { scrapeDividendosComplete } = require('./scraper-complete');
+    const result = await scrapeDividendosComplete();
     
     res.json({
       dividendos: result,
