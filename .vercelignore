@@ -1,0 +1,8 @@
+backend/
+deploy-*.md
+deploy.sh
+install.sh
+docker-compose.yml
+railway.toml
+*.md
+!README.md
