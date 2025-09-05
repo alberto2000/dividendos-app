@@ -31,21 +31,22 @@ try {
   process.exit(1);
 }
 
-try {
-  console.log('📦 Probando cheerio...');
-  const cheerio = require('cheerio');
-  console.log('✅ Cheerio cargado correctamente');
-} catch (error) {
-  console.error('❌ Error cargando cheerio:', error);
-  process.exit(1);
-}
+// Cheerio comentado temporalmente por problemas de compatibilidad
+// try {
+//   console.log('📦 Probando cheerio...');
+//   const cheerio = require('cheerio');
+//   console.log('✅ Cheerio cargado correctamente');
+// } catch (error) {
+//   console.error('❌ Error cargando cheerio:', error);
+//   process.exit(1);
+// }
 
 try {
-  console.log('📦 Probando scraper-axios...');
-  const { scrapeDividendosAxios } = require('./scraper-axios');
-  console.log('✅ Scraper cargado correctamente');
+  console.log('📦 Probando scraper-simple-axios...');
+  const { scrapeDividendosSimpleAxios } = require('./scraper-simple-axios');
+  console.log('✅ Scraper simple cargado correctamente');
 } catch (error) {
-  console.error('❌ Error cargando scraper:', error);
+  console.error('❌ Error cargando scraper simple:', error);
   process.exit(1);
 }
 
