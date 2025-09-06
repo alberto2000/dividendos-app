@@ -361,6 +361,29 @@ app.post('/api/debug/clear-corrupted-data', (req, res) => {
   }
 });
 
+// Endpoint para descargar el archivo de datos completo
+app.get('/api/debug/download-data', (req, res) => {
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    
+    const dataFile = path.join(__dirname, 'data', 'dividendos-data.json');
+    
+    if (!fs.existsSync(dataFile)) {
+      return res.status(404).json({ error: 'Archivo de datos no encontrado' });
+    }
+    
+    const data = fs.readFileSync(dataFile, 'utf8');
+    const parsedData = JSON.parse(data);
+    
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', 'attachment; filename="dividendos-data.json"');
+    res.json(parsedData);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 console.log('✅ Rutas configuradas');
 
 // Iniciar servidor
