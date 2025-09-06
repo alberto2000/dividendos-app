@@ -78,7 +78,7 @@ function saveData(dividendosData) {
   }
 }
 
-// Función para verificar si los datos son recientes (menos de 6 horas)
+// Función para verificar si los datos son recientes (válidos indefinidamente)
 function isDataRecent() {
   try {
     const data = getStoredData();
@@ -92,14 +92,17 @@ function isDataRecent() {
       return false;
     }
     
-    const lastUpdate = new Date(data.lastUpdate);
-    const now = new Date();
-    const diffHours = (now - lastUpdate) / (1000 * 60 * 60);
+    // Verificar que hay datos válidos
+    const hasValidData = data.dividendos && 
+                        (data.dividendos.confirmados.length > 0 || data.dividendos.previstos.length > 0);
     
-    console.log(`⏰ Diferencia de tiempo: ${diffHours.toFixed(2)} horas`);
-    console.log(`✅ Datos recientes: ${diffHours < 6 ? 'Sí' : 'No'} (válidos por 6 horas)`);
+    if (!hasValidData) {
+      console.log('❌ No hay datos válidos en el archivo');
+      return false;
+    }
     
-    return diffHours < 6; // Datos válidos por 6 horas
+    console.log('✅ Datos válidos encontrados (válidos indefinidamente)');
+    return true; // Datos válidos indefinidamente
   } catch (error) {
     console.error('❌ Error verificando fecha de datos:', error.message);
     return false;
@@ -117,9 +120,25 @@ function setUpdating(updating) {
   }
 }
 
+// Función para limpiar archivo corrupto
+function clearCorruptedData() {
+  try {
+    console.log('🧹 Limpiando archivo de datos corrupto...');
+    if (fs.existsSync(DATA_FILE)) {
+      fs.unlinkSync(DATA_FILE);
+      console.log('🗑️ Archivo corrupto eliminado');
+    }
+    return true;
+  } catch (error) {
+    console.error('❌ Error limpiando archivo corrupto:', error.message);
+    return false;
+  }
+}
+
 module.exports = {
   getStoredData,
   saveData,
   isDataRecent,
-  setUpdating
+  setUpdating,
+  clearCorruptedData
 };

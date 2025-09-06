@@ -140,6 +140,15 @@ app.get('/api/dividendos', async (req, res) => {
     
     // Verificar si hay datos recientes en el archivo
     console.log('🔍 Verificando si hay datos recientes...');
+    
+    // Primero verificar si el archivo existe pero está corrupto
+    const storedData = getStoredData();
+    if (storedData.lastUpdate === null && (storedData.dividendos.confirmados.length === 0 && storedData.dividendos.previstos.length === 0)) {
+      console.log('⚠️ Archivo de datos corrupto detectado, limpiando...');
+      const { clearCorruptedData } = require('./dataManager');
+      clearCorruptedData();
+    }
+    
     const hasRecentData = isDataRecent();
     
     if (hasRecentData) {
@@ -329,6 +338,22 @@ app.get('/api/debug/data-status', (req, res) => {
         updating: storedData.updating
       },
       updateStatus,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Endpoint para limpiar archivo corrupto manualmente
+app.post('/api/debug/clear-corrupted-data', (req, res) => {
+  try {
+    const { clearCorruptedData } = require('./dataManager');
+    const success = clearCorruptedData();
+    
+    res.json({
+      success,
+      message: success ? 'Archivo corrupto eliminado' : 'Error eliminando archivo corrupto',
       timestamp: new Date().toISOString()
     });
   } catch (error) {
