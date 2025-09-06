@@ -128,6 +128,7 @@ app.get('/health', (req, res) => {
 // Endpoint para obtener dividendos
 app.get('/api/dividendos', async (req, res) => {
   console.log('📡 Petición recibida en /api/dividendos');
+  console.log('🕐 Timestamp:', new Date().toISOString());
   
   try {
     const { getStoredData, isDataRecent } = require('./dataManager');
@@ -135,17 +136,27 @@ app.get('/api/dividendos', async (req, res) => {
     
     // Obtener estado de actualización
     const updateStatus = getUpdateStatus();
+    console.log('🔄 Estado de actualización:', updateStatus);
     
     // Verificar si hay datos recientes en el archivo
-    if (isDataRecent()) {
-      console.log('📦 Usando datos del archivo (recientes)');
+    console.log('🔍 Verificando si hay datos recientes...');
+    const hasRecentData = isDataRecent();
+    
+    if (hasRecentData) {
+      console.log('✅ Usando datos del archivo (recientes)');
       const storedData = getStoredData();
+      console.log('📊 Datos del archivo:', {
+        confirmados: storedData.dividendos?.confirmados?.length || 0,
+        previstos: storedData.dividendos?.previstos?.length || 0,
+        lastUpdate: storedData.lastUpdate
+      });
       
       // Agregar información de actualización si está en curso
       if (updateStatus.updating) {
         storedData.updating = true;
         storedData.updateProgress = updateStatus.progress;
         storedData.currentCompany = updateStatus.currentCompany;
+        console.log('🔄 Agregando estado de actualización en curso');
       }
       
       return res.json(storedData);
@@ -295,6 +306,33 @@ app.get('/api/debug/files', (req, res) => {
     res.status(500).json({
       error: 'Error al obtener archivos de debug'
     });
+  }
+});
+
+// Endpoint para verificar el estado del sistema de datos
+app.get('/api/debug/data-status', (req, res) => {
+  try {
+    const { getStoredData, isDataRecent } = require('./dataManager');
+    const { getUpdateStatus } = require('./updateManager');
+    
+    const storedData = getStoredData();
+    const hasRecentData = isDataRecent();
+    const updateStatus = getUpdateStatus();
+    
+    res.json({
+      hasRecentData,
+      storedData: {
+        lastUpdate: storedData.lastUpdate,
+        confirmados: storedData.dividendos?.confirmados?.length || 0,
+        previstos: storedData.dividendos?.previstos?.length || 0,
+        fromCache: storedData.fromCache,
+        updating: storedData.updating
+      },
+      updateStatus,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 

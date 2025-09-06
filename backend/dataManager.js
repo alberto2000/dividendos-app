@@ -51,19 +51,30 @@ function saveData(dividendosData) {
   }
 }
 
-// Función para verificar si los datos son recientes (menos de 1 hora)
+// Función para verificar si los datos son recientes (menos de 6 horas)
 function isDataRecent() {
   try {
     const data = getStoredData();
-    if (!data.lastUpdate) return false;
+    console.log('🔍 Verificando datos almacenados...');
+    console.log('📁 Archivo existe:', fs.existsSync(DATA_FILE));
+    console.log('📊 Datos encontrados:', data ? 'Sí' : 'No');
+    console.log('📅 Última actualización:', data.lastUpdate);
+    
+    if (!data.lastUpdate) {
+      console.log('❌ No hay fecha de última actualización');
+      return false;
+    }
     
     const lastUpdate = new Date(data.lastUpdate);
     const now = new Date();
     const diffHours = (now - lastUpdate) / (1000 * 60 * 60);
     
-    return diffHours < 1; // Datos válidos por 1 hora
+    console.log(`⏰ Diferencia de tiempo: ${diffHours.toFixed(2)} horas`);
+    console.log(`✅ Datos recientes: ${diffHours < 6 ? 'Sí' : 'No'} (válidos por 6 horas)`);
+    
+    return diffHours < 6; // Datos válidos por 6 horas
   } catch (error) {
-    console.error('Error verificando fecha de datos:', error.message);
+    console.error('❌ Error verificando fecha de datos:', error.message);
     return false;
   }
 }
